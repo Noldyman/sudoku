@@ -1,125 +1,60 @@
-import shuffle from "lodash.shuffle";
 import { useState } from "react";
-
-const generateFilledSudokuGrid = (): number[][] => {
-  let newGrid = Array.from({ length: 9 }, (_) =>
-    Array.from({ length: 9 }, (_) => 0)
-  );
-  const sudokuNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-
-  interface IBoxColumn {
-    left: number[];
-    middle: number[];
-    right: number[];
-  }
-
-  let usedNumbersPerBox = {
-    top: {
-      left: [],
-      middle: [],
-      right: [],
-    } as IBoxColumn,
-    center: {
-      left: [],
-      middle: [],
-      right: [],
-    } as IBoxColumn,
-    bottom: {
-      left: [],
-      middle: [],
-      right: [],
-    } as IBoxColumn,
-  };
-
-  for (let rowIndex = 0; rowIndex < 9; rowIndex++) {
-    const currBoxRow =
-      rowIndex < 3 ? "top" : rowIndex < 6 ? "center" : "bottom";
-    let attemptedNumbersPerCell: number[][] = Array.from(
-      { length: 9 },
-      (_) => []
-    );
-
-    let rowFailed = false;
-    for (let cellIndex = 0; cellIndex < 9; cellIndex++) {
-      if (rowFailed) break;
-      const currBoxColumn =
-        cellIndex < 3 ? "left" : cellIndex < 6 ? "middle" : "right";
-
-      const currRow = newGrid[rowIndex];
-      const currColumn = newGrid.map((row) => row[cellIndex]);
-      const currBox = usedNumbersPerBox[currBoxRow][currBoxColumn];
-
-      let shuffeledNumbers = shuffle(sudokuNumbers);
-
-      for (let i = 0; i < 9; i++) {
-        const currNum = shuffeledNumbers[i];
-
-        if (
-          !currRow.includes(currNum) &&
-          !currColumn.includes(currNum) &&
-          !currBox.includes(currNum) &&
-          !attemptedNumbersPerCell[cellIndex].includes(currNum)
-        ) {
-          newGrid[rowIndex][cellIndex] = currNum;
-          usedNumbersPerBox[currBoxRow][currBoxColumn].push(currNum);
-          attemptedNumbersPerCell[cellIndex].push(currNum);
-          break;
-        } else {
-          if (i === 8) {
-            const pastBoxColumn =
-              cellIndex - 1 < 3
-                ? "left"
-                : cellIndex - 1 < 6
-                ? "middle"
-                : "right";
-
-            newGrid[rowIndex][cellIndex - 1] = 0;
-            usedNumbersPerBox[currBoxRow][pastBoxColumn].pop();
-            if (cellIndex !== 0) {
-              attemptedNumbersPerCell[cellIndex] = [];
-              cellIndex -= 2;
-            } else {
-              const pastBoxRow =
-                rowIndex - 1 < 3
-                  ? "top"
-                  : rowIndex - 1 < 6
-                  ? "center"
-                  : "bottom";
-
-              newGrid[rowIndex - 1] = Array.from({ length: 9 }, (_) => 0);
-              usedNumbersPerBox[pastBoxRow].left.splice(-3, 3);
-              usedNumbersPerBox[pastBoxRow].middle.splice(-3, 3);
-              usedNumbersPerBox[pastBoxRow].right.splice(-3, 3);
-
-              rowFailed = true;
-              rowIndex -= 2;
-              break;
-            }
-          }
-        }
-      }
-    }
-  }
-
-  return newGrid;
-};
+import {
+  generateSudokuPuzzle,
+  Grading,
+  NumberGrid,
+  SudokuGrid as SudokuGridType,
+} from "../utils/generateSudokuPuzzle";
 
 export const SudokuGrid = () => {
-  const [grid, setGrid] = useState(generateFilledSudokuGrid());
-  const [count, setCount] = useState(1);
+  const [grading, setGrading] = useState<Grading>("medium");
+  const [fullGrid, setFullGrid] = useState<NumberGrid>([]);
+  const [sudokuPuzzle, setSudokuPuzzle] = useState<SudokuGridType>([]);
+
+  const handleCellChange = (rowIndex: number, cellIndex: number) => {
+    setSudokuPuzzle((prevGrid) => {
+      let newGrid = prevGrid.map((row) => [...row]);
+      const currNum = prevGrid[rowIndex][cellIndex].value;
+      if (currNum === 9) {
+        newGrid[rowIndex][cellIndex].value = 0;
+      } else {
+        newGrid[rowIndex][cellIndex].value = currNum + 1;
+      }
+      return newGrid;
+    });
+  };
+
+  const checkIfPuzzleIsCorrect = () => {
+    const fullGridString = fullGrid.join();
+    const puzzleInputString = sudokuPuzzle
+      .map((row) => row.map((cell) => cell.value))
+      .join();
+    if (fullGridString === puzzleInputString) {
+      console.log("success");
+    } else {
+      console.log("fail");
+    }
+  };
 
   return (
     <>
       <h1>Sudoku grid</h1>
-      <p>{count} grids were successfully generated</p>
       <button
         onClick={() => {
-          setGrid(generateFilledSudokuGrid());
-          setCount((prev) => prev + 1);
+          const grids = generateSudokuPuzzle(grading);
+          setFullGrid(grids.fullGrid);
+          setSudokuPuzzle(grids.sudokuPuzzle);
         }}
       >
         Generate grid
       </button>
+      <button onClick={checkIfPuzzleIsCorrect}>check if correct</button>
+      <button onClick={() => setGrading("easy")}>easy</button>
+      <button onClick={() => setGrading("medium")}>medium</button>
+      <button onClick={() => setGrading("hard")}>hard</button>
+      <p>
+        The current grading is <b>{grading}</b>
+      </p>
       <div
         style={{
           margin: "auto",
@@ -127,29 +62,37 @@ export const SudokuGrid = () => {
           width: "fit-content",
         }}
       >
-        {grid.map((row, i) => (
+        {sudokuPuzzle.map((row, rowIndex) => (
           <div
-            key={"row" + i}
+            key={"row" + rowIndex}
             style={{
               display: "flex",
-              borderBottom: i === 2 || i === 5 ? "2px solid black" : "",
+              borderBottom:
+                rowIndex === 2 || rowIndex === 5 ? "2px solid black" : "",
             }}
           >
-            {row.map((cell, ind) => (
+            {row.map((cell, cellIndex) => (
               <div
-                key={"cell" + ind}
+                onClick={() => {
+                  if (!cell.valueIsFixed) {
+                    handleCellChange(rowIndex, cellIndex);
+                  }
+                }}
+                key={"cell" + cellIndex}
                 style={{
+                  cursor: !cell.valueIsFixed ? "pointer" : "",
                   display: "table-cell",
                   width: "30px",
                   height: "30px",
                   lineHeight: "30px",
                   border: "black 1px solid",
-                  borderRight: ind === 2 || ind === 5 ? "2px solid black" : "",
+                  borderRight:
+                    cellIndex === 2 || cellIndex === 5 ? "2px solid black" : "",
                   textAlign: "center",
-                  backgroundColor: !cell ? "red" : "",
+                  backgroundColor: cell.valueIsFixed ? "lightGrey" : "",
                 }}
               >
-                {cell}
+                {cell.value ? cell.value : ""}
               </div>
             ))}
           </div>
