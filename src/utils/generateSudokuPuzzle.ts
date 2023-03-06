@@ -213,12 +213,8 @@ const removeCells = (fullGrid: NumberGrid, numOfCellsToClear: number) => {
     }
   }
 
-  if (clearedCells.length < numOfCellsToClear) {
-    console.log("failed to make puzzle");
-    return;
-  } else {
-    return proposedGrid;
-  }
+  if (clearedCells.length < numOfCellsToClear) return;
+  return proposedGrid;
 };
 
 export const generateSudokuPuzzle = (difficulty: Difficulty) => {

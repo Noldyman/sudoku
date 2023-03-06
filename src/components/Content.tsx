@@ -2,19 +2,38 @@ import { useState } from "react";
 import {
   Difficulty,
   generateSudokuPuzzle,
-  SudokuPuzzle as TSudokuGrid,
+  SudokuPuzzle,
 } from "../utils/generateSudokuPuzzle";
 import { SudokuGrid } from "./SudokuGrid";
 import { checkSolution } from "../utils/checkSolution";
+import { StartGame } from "./StartGame";
+
+interface IPuzzleObj {
+  puzzleSolution: string;
+  sudokuPuzzle: SudokuPuzzle;
+}
 
 export const Content = () => {
   const [puzzleSolution, setPuzzleSolution] = useState("");
-  const [sudokuPuzzle, setSudokuPuzzle] = useState<TSudokuGrid | undefined>();
+  const [sudokuPuzzle, setSudokuPuzzle] = useState<SudokuPuzzle | undefined>();
+  const [loading, setLoading] = useState(false);
 
-  const generateNewSudoku = (difficulty: Difficulty) => {
-    const puzzle = generateSudokuPuzzle(difficulty);
+  const createNewSudoku = (difficulty: Difficulty): Promise<IPuzzleObj> =>
+    new Promise((res, rej) => {
+      //Added setTimeout, because setLoading in startNewGame did not work otherwise.
+      setTimeout(() => {
+        const newPuzzle = generateSudokuPuzzle(difficulty);
+        res(newPuzzle);
+      }, 0);
+    });
+
+  const startNewGame = async (difficulty: Difficulty) => {
+    await setLoading(true);
+    const puzzle = await createNewSudoku(difficulty);
     setPuzzleSolution(puzzle.puzzleSolution);
     setSudokuPuzzle(puzzle.sudokuPuzzle);
+
+    setLoading(false);
   };
 
   const changeSudoku = (rowIndex: number, cellIndex: number) => {
@@ -42,13 +61,16 @@ export const Content = () => {
 
   return (
     <div className="content">
-      <SudokuGrid
-        sudokuPuzzle={sudokuPuzzle}
-        onGenerate={generateNewSudoku}
-        onChange={changeSudoku}
-        onCheckSolution={() => checkSolution(puzzleSolution, sudokuPuzzle!)}
-        onQuit={quitSudoku}
-      />
+      {sudokuPuzzle ? (
+        <SudokuGrid
+          sudokuPuzzle={sudokuPuzzle}
+          onChange={changeSudoku}
+          onCheckSolution={() => checkSolution(puzzleSolution, sudokuPuzzle!)}
+          onQuit={quitSudoku}
+        />
+      ) : (
+        <StartGame onGenerate={startNewGame} loading={loading} />
+      )}
     </div>
   );
 };
