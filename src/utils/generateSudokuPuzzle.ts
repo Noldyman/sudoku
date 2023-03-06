@@ -2,8 +2,8 @@ import shuffle from "lodash.shuffle";
 import flatten from "lodash.flatten";
 
 export type NumberGrid = number[][];
-export type SudokuGrid = { value: number; valueIsFixed: boolean }[][];
-export type Grading = "easy" | "medium" | "hard";
+export type SudokuPuzzle = { value: number; valueIsFixed: boolean }[][];
+export type Difficulty = "easy" | "medium" | "hard";
 interface ICell {
   rowIndex: number;
   cellIndex: number;
@@ -221,20 +221,20 @@ const removeCells = (fullGrid: NumberGrid, numOfCellsToClear: number) => {
   }
 };
 
-export const generateSudokuPuzzle = (grading: Grading) => {
+export const generateSudokuPuzzle = (difficulty: Difficulty) => {
   const numOfCellsToClear = {
     easy: 30,
     medium: 44,
     hard: 58,
   };
 
-  let fullGrid: NumberGrid = [];
+  let puzzleSolution: NumberGrid = [];
   let puzzleGrid: NumberGrid | undefined = undefined;
 
   let puzzleCompleted = false;
   while (!puzzleCompleted) {
-    fullGrid = createFullGrid();
-    puzzleGrid = removeCells(fullGrid, numOfCellsToClear[grading]);
+    puzzleSolution = createFullGrid();
+    puzzleGrid = removeCells(puzzleSolution, numOfCellsToClear[difficulty]);
     if (puzzleGrid) {
       puzzleCompleted = true;
     }
@@ -243,5 +243,5 @@ export const generateSudokuPuzzle = (grading: Grading) => {
   const sudokuPuzzle = puzzleGrid!.map((row) =>
     row.map((cell) => ({ value: cell, valueIsFixed: cell ? true : false }))
   );
-  return { fullGrid, sudokuPuzzle };
+  return { puzzleSolution: puzzleSolution.join(), sudokuPuzzle };
 };

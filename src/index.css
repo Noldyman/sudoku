@@ -1,13 +1,64 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+.content {
+  padding: 20px;
+}
+
+.top-bar {
+  padding: 10px;
+  background-color: #546e7a;
+  color: #fff;
+  text-align: center;
+  font-size: 30px;
+}
+
+.sudoku-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.sudoku-grid {
+  margin: 0px;
+  padding: 20px;
+  width: fit-content;
+}
+
+.sudoku-grid-actions {
+  width: 400px;
+  margin: 0px;
+  padding: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.start-game-card {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.button {
+  margin: 0px;
+  padding: 5px;
+}
+
+.difficulty-settings {
+  border: solid 1px rgba(84, 110, 122, 0.2);
+  border-radius: 5px;
+  text-align: center;
+  padding-bottom: 15px;
 }

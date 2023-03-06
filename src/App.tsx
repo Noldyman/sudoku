@@ -1,11 +1,13 @@
-import "./App.css";
-import { SudokuGrid } from "./components/SudokuGrid";
+import { TopBar } from "./components/TopBar";
+import { Content } from "./components/Content";
+
+document.documentElement.setAttribute("data-theme", "light");
 
 function App() {
   return (
     <>
-      <h1>Sudoku</h1>
-      <SudokuGrid />
+      <TopBar />
+      <Content />
     </>
   );
 }
