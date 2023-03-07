@@ -1,17 +1,35 @@
-import { SudokuPuzzle } from "../utils/generateSudokuPuzzle";
+import { Difficulty, SudokuPuzzle } from "../utils/generateSudokuPuzzle";
+
+export const createTimeString = (timeInSeconds: number) => {
+  const hours = Math.floor(timeInSeconds / 3600);
+  const minutes = Math.floor((timeInSeconds % 3600) / 60);
+  const seconds = timeInSeconds % 60;
+
+  return `${hours < 10 ? "0" + hours : hours}:${
+    minutes < 10 ? "0" + minutes : minutes
+  }:${seconds < 10 ? "0" + seconds : seconds}`;
+};
 
 interface Props {
   sudokuPuzzle: SudokuPuzzle;
+  time: number;
   onChange: (rowIndex: number, cellIndex: number) => void;
   onCheckSolution: () => void;
   onQuit: () => void;
+  difficulty: Difficulty;
+  highscore: number;
+  finished: boolean;
 }
 
 export const SudokuGrid = ({
   sudokuPuzzle,
+  time,
   onChange,
   onCheckSolution,
   onQuit,
+  difficulty,
+  highscore,
+  finished,
 }: Props) => {
   const puzzleIsFullyFilled = () => {
     if (!sudokuPuzzle) return false;
@@ -29,12 +47,27 @@ export const SudokuGrid = ({
 
   return (
     <div className="sudoku-container">
+      <article className="sudoku-grid-header">
+        <span>
+          Difficulty: <b>{difficulty}</b>
+        </span>
+        <div className="timer">
+          <span>
+            Time: <b>{createTimeString(time)}</b>
+          </span>
+          <span>
+            Highscore: <b>{highscore ? createTimeString(highscore) : "-"}</b>
+          </span>
+        </div>
+      </article>
       <article className="sudoku-grid">
         {sudokuPuzzle.map((row, rowIndex) => (
           <div key={"row" + rowIndex}>
             {row.map((cell, cellIndex) => (
               <div
-                onClick={() => onChange(rowIndex, cellIndex)}
+                onClick={() => {
+                  if (!finished) onChange(rowIndex, cellIndex);
+                }}
                 key={"cell" + cellIndex}
                 style={{
                   border: "1px solid black",
@@ -43,7 +76,7 @@ export const SudokuGrid = ({
                   height: "40px",
                   textAlign: "center",
                   lineHeight: "40px",
-                  cursor: !cell.valueIsFixed ? "pointer" : "",
+                  cursor: !cell.valueIsFixed && !finished ? "pointer" : "",
                   backgroundColor: cell.valueIsFixed
                     ? "rgba(84, 110, 122, 0.2)"
                     : "",
@@ -65,16 +98,25 @@ export const SudokuGrid = ({
         ))}
       </article>
       <article className="sudoku-grid-actions">
-        <button
-          className="button"
-          disabled={!puzzleIsFullyFilled()}
-          onClick={onCheckSolution}
-        >
-          Check solution
-        </button>
-        <button className="secondary button" onClick={onQuit}>
-          Quit game
-        </button>
+        {finished ? (
+          <button className="button" onClick={onQuit}>
+            New gamee
+          </button>
+        ) : (
+          <>
+            {" "}
+            <button
+              className="button"
+              disabled={!puzzleIsFullyFilled()}
+              onClick={onCheckSolution}
+            >
+              Check solution
+            </button>
+            <button className="secondary button" onClick={onQuit}>
+              Quit game
+            </button>
+          </>
+        )}{" "}
       </article>
     </div>
   );

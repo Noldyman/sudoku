@@ -1,24 +1,18 @@
-import { useState, useEffect } from "react";
 import { Difficulty } from "../utils/generateSudokuPuzzle";
 
 interface Props {
+  difficulty: Difficulty;
+  onChangeDifficulty: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onGenerate: (difficulty: Difficulty) => void;
   loading: boolean;
 }
 
-export const StartGame = ({ onGenerate, loading }: Props) => {
-  const [difficulty, setDifficulty] = useState(
-    (window.localStorage.getItem("difficultySetting") as Difficulty) || "medium"
-  );
-
-  useEffect(() => {
-    window.localStorage.setItem("difficultySetting", difficulty);
-  }, [difficulty]);
-
-  const changeDifficulty = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDifficulty(e.currentTarget.value as Difficulty);
-  };
-
+export const StartGame = ({
+  difficulty,
+  onChangeDifficulty,
+  onGenerate,
+  loading,
+}: Props) => {
   return (
     <div className="sudoku-container">
       <article className="sudoku-grid-actions start-game-card">
@@ -33,7 +27,7 @@ export const StartGame = ({ onGenerate, loading }: Props) => {
             name="easy"
             value="easy"
             checked={difficulty === "easy"}
-            onChange={changeDifficulty}
+            onChange={onChangeDifficulty}
           />
           <label htmlFor="easy">Easy</label>
           <input
@@ -42,7 +36,7 @@ export const StartGame = ({ onGenerate, loading }: Props) => {
             name="medium"
             value="medium"
             checked={difficulty === "medium"}
-            onChange={changeDifficulty}
+            onChange={onChangeDifficulty}
           />
           <label htmlFor="medium">Medium</label>
           <input
@@ -51,7 +45,7 @@ export const StartGame = ({ onGenerate, loading }: Props) => {
             name="hard"
             value="hard"
             checked={difficulty === "hard"}
-            onChange={changeDifficulty}
+            onChange={onChangeDifficulty}
           />
           <label htmlFor="hard">Hard</label>
         </fieldset>
