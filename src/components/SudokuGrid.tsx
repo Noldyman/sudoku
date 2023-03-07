@@ -68,7 +68,8 @@ export const SudokuGrid = ({
             {row.map((cell, cellIndex) => (
               <div
                 onClick={() => {
-                  if (!finished) onChange(rowIndex, cellIndex);
+                  if (!finished && !cell.valueIsFixed)
+                    onChange(rowIndex, cellIndex);
                 }}
                 key={"cell" + cellIndex}
                 style={{
