@@ -219,7 +219,8 @@ const removeCells = (fullGrid: NumberGrid, numOfCellsToClear: number) => {
 
 export const generateSudokuPuzzle = (difficulty: Difficulty) => {
   const numOfCellsToClear = {
-    easy: 30,
+    easy: 1,
+    // easy: 30,
     medium: 44,
     hard: 58,
   };

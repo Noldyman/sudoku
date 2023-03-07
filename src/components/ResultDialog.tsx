@@ -22,6 +22,8 @@ export const ResultDialog = ({ open, result, onClose }: Props) => {
   useEffect(() => {
     if (result && (!result.highscore || result.time < result.highscore)) {
       setShowConffetti(true);
+    } else {
+      setShowConffetti(false);
     }
   }, [result]);
 

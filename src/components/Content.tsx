@@ -7,6 +7,7 @@ import {
 import { SudokuGrid } from "./SudokuGrid";
 import { StartGame } from "./StartGame";
 import { CloseMethod, ISuccessResult, ResultDialog } from "./ResultDialog";
+import { PausedDialog } from "./PausedDialog";
 
 interface IPuzzleObj {
   puzzleSolution: string;
@@ -27,7 +28,8 @@ export const Content = () => {
   const [timerIsPaused, setTimerIsPaused] = useState(false);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ISuccessResult | undefined>();
-  const [showResult, setShowResult] = useState(false);
+  const [showResultDialog, setShowResultDialog] = useState(false);
+  const [showPausedDialog, setShowPausedDialog] = useState(false);
   const [sudokuIsFinished, setSudokuIsFinished] = useState(false);
 
   useEffect(() => {
@@ -75,6 +77,16 @@ export const Content = () => {
     setLoading(false);
   };
 
+  const pauseGame = () => {
+    setTimerIsPaused(true);
+    setShowPausedDialog(true);
+  };
+
+  const continueGame = () => {
+    setShowPausedDialog(false);
+    setTimerIsPaused(false);
+  };
+
   const changeSudoku = (rowIndex: number, cellIndex: number) => {
     setSudokuPuzzle((prevPuzzle) => {
       if (!prevPuzzle) return;
@@ -101,10 +113,10 @@ export const Content = () => {
       .join();
     if (puzzleSolution === puzzleInputString) {
       setResult({ time, highscore });
-      setShowResult(true);
+      setShowResultDialog(true);
     } else {
       setResult(undefined);
-      setShowResult(true);
+      setShowResultDialog(true);
     }
   };
 
@@ -129,7 +141,7 @@ export const Content = () => {
     }
 
     setResult(undefined);
-    setShowResult(false);
+    setShowResultDialog(false);
   };
 
   const quitSudoku = () => {
@@ -147,6 +159,7 @@ export const Content = () => {
         <SudokuGrid
           sudokuPuzzle={sudokuPuzzle}
           time={time}
+          onPause={pauseGame}
           onChange={changeSudoku}
           onCheckSolution={checkSolution}
           onQuit={quitSudoku}
@@ -162,9 +175,12 @@ export const Content = () => {
           loading={loading}
         />
       )}
-      {showResult && (
-        <ResultDialog open={showResult} result={result} onClose={closeResult} />
-      )}
+      <PausedDialog open={showPausedDialog} onContinue={continueGame} />
+      <ResultDialog
+        open={showResultDialog}
+        result={result}
+        onClose={closeResult}
+      />
     </div>
   );
 };

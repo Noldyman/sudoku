@@ -13,6 +13,7 @@ export const createTimeString = (timeInSeconds: number) => {
 interface Props {
   sudokuPuzzle: SudokuPuzzle;
   time: number;
+  onPause: () => void;
   onChange: (rowIndex: number, cellIndex: number) => void;
   onCheckSolution: () => void;
   onQuit: () => void;
@@ -24,6 +25,7 @@ interface Props {
 export const SudokuGrid = ({
   sudokuPuzzle,
   time,
+  onPause,
   onChange,
   onCheckSolution,
   onQuit,
@@ -104,17 +106,18 @@ export const SudokuGrid = ({
           </button>
         ) : (
           <>
-            {" "}
-            <button
-              className="button"
-              disabled={!puzzleIsFullyFilled()}
-              onClick={onCheckSolution}
-            >
-              Check solution
-            </button>
             <button className="secondary button" onClick={onQuit}>
               Quit game
             </button>
+            {!puzzleIsFullyFilled() ? (
+              <button className="button" onClick={onPause}>
+                Pause
+              </button>
+            ) : (
+              <button className="button" onClick={onCheckSolution}>
+                Check solution
+              </button>
+            )}
           </>
         )}{" "}
       </article>
