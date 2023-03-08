@@ -4,7 +4,7 @@ import flatten from "lodash.flatten";
 export type NumberGrid = number[][];
 export type SudokuPuzzle = { value: number; valueIsFixed: boolean }[][];
 export type Difficulty = "easy" | "medium" | "hard";
-interface ICell {
+export interface ICell {
   rowIndex: number;
   cellIndex: number;
 }

@@ -87,20 +87,14 @@ export const Content = () => {
     setTimerIsPaused(false);
   };
 
-  const changeSudoku = (rowIndex: number, cellIndex: number) => {
+  const changeSudoku = (rowIndex: number, cellIndex: number, input: number) => {
     setSudokuPuzzle((prevPuzzle) => {
       if (!prevPuzzle) return;
-      const currValue = prevPuzzle[rowIndex][cellIndex].value;
       const newPuzzle = prevPuzzle.map((row) =>
         row.map((cell) => ({ ...cell }))
       );
 
-      if (currValue === 9) {
-        newPuzzle[rowIndex][cellIndex].value = 0;
-      } else {
-        newPuzzle[rowIndex][cellIndex].value = currValue + 1;
-      }
-
+      newPuzzle[rowIndex][cellIndex].value = input;
       return newPuzzle;
     });
   };

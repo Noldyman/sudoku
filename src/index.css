@@ -31,7 +31,6 @@ code {
 .top-bar {
   padding: 10px;
   background-color: #455a64;
-  /* background-color: #1e88e5; */
   color: #fff;
   text-align: center;
   font-size: 30px;
@@ -95,4 +94,18 @@ code {
 .dialog-footer {
   display: flex;
   gap: 10px;
+}
+
+.number-input {
+  margin: 5px;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.number-input-row {
+  display: flex;
+  gap: 5px;
+  width: 120px;
 }

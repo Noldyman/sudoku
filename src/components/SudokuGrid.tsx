@@ -1,4 +1,7 @@
-import { Difficulty, SudokuPuzzle } from "../utils/generateSudokuPuzzle";
+import { Difficulty, ICell, SudokuPuzzle } from "../utils/generateSudokuPuzzle";
+import { Popover } from "react-tiny-popover";
+import { useState } from "react";
+import { NumberInput } from "./NumberInput";
 
 export const createTimeString = (timeInSeconds: number) => {
   const hours = Math.floor(timeInSeconds / 3600);
@@ -14,7 +17,7 @@ interface Props {
   sudokuPuzzle: SudokuPuzzle;
   time: number;
   onPause: () => void;
-  onChange: (rowIndex: number, cellIndex: number) => void;
+  onChange: (rowIndex: number, cellIndex: number, input: number) => void;
   onCheckSolution: () => void;
   onQuit: () => void;
   difficulty: Difficulty;
@@ -33,6 +36,8 @@ export const SudokuGrid = ({
   highscore,
   finished,
 }: Props) => {
+  const [editCell, setEditCell] = useState<ICell | undefined>();
+
   const puzzleIsFullyFilled = () => {
     if (!sudokuPuzzle) return false;
     let result = true;
@@ -45,6 +50,12 @@ export const SudokuGrid = ({
     });
 
     return result;
+  };
+
+  const handleInput = (input: number) => {
+    if (!editCell) return;
+    onChange(editCell.rowIndex, editCell.cellIndex, input);
+    setEditCell(undefined);
   };
 
   return (
@@ -66,36 +77,52 @@ export const SudokuGrid = ({
         {sudokuPuzzle.map((row, rowIndex) => (
           <div key={"row" + rowIndex}>
             {row.map((cell, cellIndex) => (
-              <div
-                onClick={() => {
-                  if (!finished && !cell.valueIsFixed)
-                    onChange(rowIndex, cellIndex);
-                }}
-                key={"cell" + cellIndex}
-                style={{
-                  border: "1px solid black",
-                  display: "table-cell",
-                  width: "40px",
-                  height: "40px",
-                  textAlign: "center",
-                  lineHeight: "40px",
-                  cursor: !cell.valueIsFixed && !finished ? "pointer" : "",
-                  backgroundColor: cell.valueIsFixed
-                    ? "rgba(84, 110, 122, 0.2)"
-                    : "",
-                  color: cell.valueIsFixed ? "black" : "",
-                  borderRight:
-                    cellIndex === 2 || cellIndex === 5
-                      ? "3px solid black"
-                      : "1px solid black",
-                  borderBottom:
-                    rowIndex === 2 || rowIndex === 5
-                      ? "3px solid black"
-                      : "1px solid black",
-                }}
+              <Popover
+                isOpen={Boolean(
+                  editCell?.rowIndex === rowIndex &&
+                    editCell?.cellIndex === cellIndex
+                )}
+                positions={["right", "left", "bottom", "top"]}
+                reposition={false}
+                onClickOutside={() => setEditCell(undefined)}
+                content={<NumberInput onInput={handleInput} />}
               >
-                {cell.value ? cell.value : ""}
-              </div>
+                <div
+                  onClick={() => {
+                    if (!finished && !cell.valueIsFixed)
+                      setEditCell({ rowIndex, cellIndex });
+                  }}
+                  key={"cell" + cellIndex}
+                  style={{
+                    border: "1px solid black",
+                    display: "table-cell",
+                    width: "40px",
+                    height: "40px",
+                    textAlign: "center",
+                    lineHeight: "40px",
+                    cursor: !cell.valueIsFixed && !finished ? "pointer" : "",
+                    backgroundColor: cell.valueIsFixed
+                      ? "rgba(84, 110, 122, 0.1)"
+                      : Boolean(
+                          editCell?.rowIndex === rowIndex &&
+                            editCell?.cellIndex === cellIndex
+                        )
+                      ? "rgba(255,179,0,0.5)"
+                      : "",
+                    color: cell.valueIsFixed ? "black" : "",
+                    borderRight:
+                      cellIndex === 2 || cellIndex === 5
+                        ? "3px solid black"
+                        : "1px solid black",
+                    borderBottom:
+                      rowIndex === 2 || rowIndex === 5
+                        ? "3px solid black"
+                        : "1px solid black",
+                  }}
+                >
+                  {cell.value ? cell.value : ""}
+                </div>
+              </Popover>
             ))}
           </div>
         ))}
