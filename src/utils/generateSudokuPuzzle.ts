@@ -1,10 +1,14 @@
 import shuffle from "lodash.shuffle";
 import flatten from "lodash.flatten";
 
-export type NumberGrid = number[][];
-export type SudokuPuzzle = { value: number; valueIsFixed: boolean }[][];
-export type Difficulty = "easy" | "medium" | "hard";
 export interface ICell {
+  value: number;
+  valueIsFixed: boolean;
+}
+export type NumberGrid = number[][];
+export type SudokuPuzzle = ICell[][];
+export type Difficulty = "easy" | "medium" | "hard";
+export interface ICoordinates {
   rowIndex: number;
   cellIndex: number;
 }
@@ -134,7 +138,10 @@ const createFullGrid = (): NumberGrid => {
   return newGrid;
 };
 
-const puzzleIsSolvable = (proposedGrid: NumberGrid, clearedCells: ICell[]) => {
+const puzzleIsSolvable = (
+  proposedGrid: NumberGrid,
+  clearedCells: ICoordinates[]
+) => {
   let testGrid = proposedGrid.map((row) => [...row]);
   let clearedCellArr = clearedCells.map((c) => ({ ...c }));
   let lastArrayLength = clearedCellArr.length + 1;
@@ -176,7 +183,7 @@ const puzzleIsSolvable = (proposedGrid: NumberGrid, clearedCells: ICell[]) => {
 
 const removeCells = (fullGrid: NumberGrid, numOfCellsToClear: number) => {
   let proposedGrid = fullGrid.map((row) => [...row]);
-  let clearedCells: ICell[] = [];
+  let clearedCells: ICoordinates[] = [];
   let testedCellStrings: string[] = [];
   let lastClearedCellIsSafe = false;
 
@@ -185,7 +192,7 @@ const removeCells = (fullGrid: NumberGrid, numOfCellsToClear: number) => {
     (clearedCells.length < numOfCellsToClear || !lastClearedCellIsSafe) &&
     testedCellStrings.length !== 81
   ) {
-    let testCell: ICell | undefined = undefined;
+    let testCell: ICoordinates | undefined = undefined;
     let testCellString = "";
     while (!testCell) {
       const testRowIndex = getRandomIndex();

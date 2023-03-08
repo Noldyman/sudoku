@@ -14,13 +14,13 @@ export const StartGame = ({
   loading,
 }: Props) => {
   return (
-    <div className="sudoku-container">
-      <article className="sudoku-grid-actions start-game-card">
-        <h3 style={{ marginBottom: "0px" }}>New game</h3>
-        <fieldset className="difficulty-settings">
-          <legend style={{ margin: "auto" }}>
-            <b>Difficulty</b>
-          </legend>
+    <article className="card card-content">
+      <h3 className="h3">New game</h3>
+      <fieldset className="difficulty-settings">
+        <legend className="legend">
+          <b>Difficulty</b>
+        </legend>
+        <div className="difficulty">
           <input
             type="radio"
             id="easy"
@@ -30,6 +30,8 @@ export const StartGame = ({
             onChange={onChangeDifficulty}
           />
           <label htmlFor="easy">Easy</label>
+        </div>
+        <div className="difficulty">
           <input
             type="radio"
             id="medium"
@@ -39,6 +41,8 @@ export const StartGame = ({
             onChange={onChangeDifficulty}
           />
           <label htmlFor="medium">Medium</label>
+        </div>
+        <div className="difficulty">
           <input
             type="radio"
             id="hard"
@@ -48,17 +52,17 @@ export const StartGame = ({
             onChange={onChangeDifficulty}
           />
           <label htmlFor="hard">Hard</label>
-        </fieldset>
+        </div>
+      </fieldset>
 
-        <button
-          className="button"
-          disabled={loading}
-          aria-busy={loading}
-          onClick={() => onGenerate(difficulty)}
-        >
-          {loading ? "Generating" : "Start"} sudoku
-        </button>
-      </article>
-    </div>
+      <button
+        className="button"
+        disabled={loading}
+        aria-busy={loading}
+        onClick={() => onGenerate(difficulty)}
+      >
+        {loading ? "Generating" : "Start"} sudoku
+      </button>
+    </article>
   );
 };

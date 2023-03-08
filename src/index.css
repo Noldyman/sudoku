@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
@@ -24,10 +28,6 @@ code {
   --secondary-inverse: rgba(0, 0, 0, 0.75);
 }
 
-.content {
-  padding: 20px;
-}
-
 .top-bar {
   padding: 10px;
   background-color: #455a64;
@@ -36,47 +36,15 @@ code {
   font-size: 30px;
 }
 
-.sudoku-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
+.content {
+  width: 95%;
+  max-width: 450px;
+  margin: auto;
+  margin-top: 10px;
 }
 
-.sudoku-grid-header {
-  width: 400px;
-  margin: 0px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  text-align: center;
-}
-
-.timer {
-  display: flex;
-  justify-content: space-between;
-}
-
-.sudoku-grid {
-  margin: 0px;
-  padding: 20px;
-  width: fit-content;
-}
-
-.sudoku-grid-actions {
-  width: 400px;
-  margin: 0px;
-  padding: 20px;
-  display: flex;
-  gap: 10px;
-}
-
-.start-game-card {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  text-align: center;
+.h3 {
+  margin-bottom: 0px;
 }
 
 .button {
@@ -84,11 +52,90 @@ code {
   padding: 5px;
 }
 
+.card {
+  margin: 0px;
+  padding: 20px;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: center;
+}
+
+.card-actions {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+}
+
 .difficulty-settings {
   border: solid 1px rgba(84, 110, 122, 0.2);
   border-radius: 5px;
-  text-align: center;
-  padding-bottom: 15px;
+  padding: 0px 10px 15px 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+@media (max-width: 340px) {
+  [class="difficulty-settings"] {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.legend {
+  margin: auto;
+}
+
+.game-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.timer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.row {
+  display: flex;
+}
+
+.cell {
+  border: 1px solid black;
+  width: 100%;
+  height: calc((95vw - 40px) / 9);
+  max-height: 45.5556px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: large;
+}
+
+.cell-editable {
+  cursor: pointer;
+}
+
+.cell-fixed {
+  background-color: rgba(84, 110, 122, 0.1);
+  color: black;
+}
+
+.cell-selected {
+  background-color: rgba(255, 179, 0, 0.5);
+}
+
+.cell-box-border-right {
+  border-right: 3px solid black;
+}
+
+.cell-box-border-bottom {
+  border-bottom: 3px solid black;
 }
 
 .dialog-footer {

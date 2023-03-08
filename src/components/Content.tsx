@@ -148,33 +148,35 @@ export const Content = () => {
   };
 
   return (
-    <div className="content">
-      {sudokuPuzzle ? (
-        <SudokuGrid
-          sudokuPuzzle={sudokuPuzzle}
-          time={time}
-          onPause={pauseGame}
-          onChange={changeSudoku}
-          onCheckSolution={checkSolution}
-          onQuit={quitSudoku}
-          difficulty={difficulty}
-          highscore={highscore}
-          finished={sudokuIsFinished}
-        />
-      ) : (
-        <StartGame
-          difficulty={difficulty}
-          onChangeDifficulty={changeDifficulty}
-          onGenerate={startNewGame}
-          loading={loading}
-        />
-      )}
+    <>
+      <div className="content">
+        {sudokuPuzzle ? (
+          <SudokuGrid
+            sudokuPuzzle={sudokuPuzzle}
+            time={time}
+            onPause={pauseGame}
+            onChange={changeSudoku}
+            onCheckSolution={checkSolution}
+            onQuit={quitSudoku}
+            difficulty={difficulty}
+            highscore={highscore}
+            finished={sudokuIsFinished}
+          />
+        ) : (
+          <StartGame
+            difficulty={difficulty}
+            onChangeDifficulty={changeDifficulty}
+            onGenerate={startNewGame}
+            loading={loading}
+          />
+        )}
+      </div>
       <PausedDialog open={showPausedDialog} onContinue={continueGame} />
       <ResultDialog
         open={showResultDialog}
         result={result}
         onClose={closeResult}
       />
-    </div>
+    </>
   );
 };

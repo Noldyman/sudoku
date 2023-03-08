@@ -1,4 +1,9 @@
-import { Difficulty, ICell, SudokuPuzzle } from "../utils/generateSudokuPuzzle";
+import {
+  Difficulty,
+  ICell,
+  ICoordinates,
+  SudokuPuzzle,
+} from "../utils/generateSudokuPuzzle";
 import { Popover } from "react-tiny-popover";
 import { useState } from "react";
 import { NumberInput } from "./NumberInput";
@@ -36,7 +41,23 @@ export const SudokuGrid = ({
   highscore,
   finished,
 }: Props) => {
-  const [editCell, setEditCell] = useState<ICell | undefined>();
+  const [editCell, setEditCell] = useState<ICoordinates | undefined>();
+
+  const getClassName = (cell: ICell, coordinates: ICoordinates) => {
+    const { valueIsFixed } = cell;
+    const { rowIndex, cellIndex } = coordinates;
+    let newClassName = "cell";
+    if (!finished && !valueIsFixed) newClassName += " cell-editable";
+    if (valueIsFixed) newClassName += " cell-fixed";
+    if (editCell?.rowIndex === rowIndex && editCell.cellIndex === cellIndex)
+      newClassName += " cell-selected";
+    if (rowIndex === 2 || rowIndex === 5)
+      newClassName += " cell-box-border-bottom";
+    if (cellIndex === 2 || cellIndex === 5)
+      newClassName += " cell-box-border-right";
+
+    return newClassName;
+  };
 
   const puzzleIsFullyFilled = () => {
     if (!sudokuPuzzle) return false;
@@ -59,8 +80,8 @@ export const SudokuGrid = ({
   };
 
   return (
-    <div className="sudoku-container">
-      <article className="sudoku-grid-header">
+    <div className="game-container">
+      <article className="card card-content">
         <span>
           Difficulty: <b>{difficulty}</b>
         </span>
@@ -73,9 +94,9 @@ export const SudokuGrid = ({
           </span>
         </div>
       </article>
-      <article className="sudoku-grid">
+      <article className="card">
         {sudokuPuzzle.map((row, rowIndex) => (
-          <div key={"row" + rowIndex}>
+          <div className="row" key={"row" + rowIndex}>
             {row.map((cell, cellIndex) => (
               <Popover
                 isOpen={Boolean(
@@ -83,42 +104,17 @@ export const SudokuGrid = ({
                     editCell?.cellIndex === cellIndex
                 )}
                 positions={["right", "left", "bottom", "top"]}
-                reposition={false}
+                reposition={true}
                 onClickOutside={() => setEditCell(undefined)}
                 content={<NumberInput onInput={handleInput} />}
               >
                 <div
+                  className={getClassName(cell, { rowIndex, cellIndex })}
                   onClick={() => {
                     if (!finished && !cell.valueIsFixed)
                       setEditCell({ rowIndex, cellIndex });
                   }}
                   key={"cell" + cellIndex}
-                  style={{
-                    border: "1px solid black",
-                    display: "table-cell",
-                    width: "40px",
-                    height: "40px",
-                    textAlign: "center",
-                    lineHeight: "40px",
-                    cursor: !cell.valueIsFixed && !finished ? "pointer" : "",
-                    backgroundColor: cell.valueIsFixed
-                      ? "rgba(84, 110, 122, 0.1)"
-                      : Boolean(
-                          editCell?.rowIndex === rowIndex &&
-                            editCell?.cellIndex === cellIndex
-                        )
-                      ? "rgba(255,179,0,0.5)"
-                      : "",
-                    color: cell.valueIsFixed ? "black" : "",
-                    borderRight:
-                      cellIndex === 2 || cellIndex === 5
-                        ? "3px solid black"
-                        : "1px solid black",
-                    borderBottom:
-                      rowIndex === 2 || rowIndex === 5
-                        ? "3px solid black"
-                        : "1px solid black",
-                  }}
                 >
                   {cell.value ? cell.value : ""}
                 </div>
@@ -127,16 +123,13 @@ export const SudokuGrid = ({
           </div>
         ))}
       </article>
-      <article className="sudoku-grid-actions">
+      <article className="card card-actions">
         {finished ? (
           <button className="button" onClick={onQuit}>
             New gamee
           </button>
         ) : (
           <>
-            <button className="secondary button" onClick={onQuit}>
-              Quit game
-            </button>
             {!puzzleIsFullyFilled() ? (
               <button className="button" onClick={onPause}>
                 Pause
@@ -146,8 +139,11 @@ export const SudokuGrid = ({
                 Check solution
               </button>
             )}
+            <button className="secondary button" onClick={onQuit}>
+              Quit game
+            </button>
           </>
-        )}{" "}
+        )}
       </article>
     </div>
   );
